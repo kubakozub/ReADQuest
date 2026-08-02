@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>ReADQuest</h1>
+    <span id="badge" class="badge">…</span>
+  </header>
+
+  <section class="toggles">
+    <label class="sw">
+      <input type="checkbox" id="tagging">
+      <span>Oznaczanie ruchu <em>(User-Agent + identyfikator)</em></span>
+    </label>
+    <label class="sw danger">
+      <input type="checkbox" id="blockProduction">
+      <span>Blokada produkcji <em>(allegro.pl/.sk/.cz, allegrogroup.com)</em></span>
+    </label>
+    <p class="hint" id="uaHint"></p>
+  </section>
+
+  <nav class="tabs">
+    <button data-tab="health" class="on">Diagnostyka</button>
+    <button data-tab="tests">Tester</button>
+    <button data-tab="log">Log trafień</button>
+    <button data-tab="rules">Reguły</button>
+  </nav>
+
+  <main>
+    <div id="tab-health" class="tab on"></div>
+    <div id="tab-tests" class="tab">
+      <div class="bar"><button id="runTests">Uruchom testy dopasowania</button><span id="testSummary"></span></div>
+      <div id="testResults"></div>
+    </div>
+    <div id="tab-log" class="tab">
+      <div class="bar"><button id="clearLog">Wyczyść</button><span class="hint">Tylko żądania, które trafiły w regułę.</span></div>
+      <div id="logRows"></div>
+    </div>
+    <div id="tab-rules" class="tab">
+      <div class="bar"><button id="copyRules">Kopiuj JSON reguł</button><span id="copyState"></span></div>
+      <pre id="rulesJson"></pre>
+    </div>
+  </main>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

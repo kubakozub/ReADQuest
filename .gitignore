@@ -1,0 +1,18 @@
+# Zależności — repo ma ich nie mieć (CLAUDE.md §10), wpis na wypadek narzędzi pomocniczych
+node_modules/
+
+# Lokalne nadpisania zakresu, które nie mają trafiać do repo
+scope.config.local.json
+
+# Artefakty systemowe
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Edytory
+.vscode/
+.idea/
+*.swp
+
+# Logi
+*.log

@@ -1,0 +1,95 @@
+{
+  "$comment": [
+    "Jedyne źródło prawdy dla reguł. Po każdej zmianie: node tools/sync-manifest.mjs,",
+    "potem Reload rozszerzenia w chrome://extensions i zakładka DIAGNOSTYKA w popupie.",
+    "",
+    "mode:",
+    "  exact               -> tylko ten host, bez subdomen",
+    "  domainAndSubdomains -> host + wszystkie subdomeny (odpowiednik ^(.+\\.)?host$ z v1)",
+    "  subdomains          -> wyłącznie subdomeny, apex NIE jest oznaczany"
+  ],
+
+  "identity": {
+    "marker": "TWOJ_ALIAS@intigriti.me"
+  },
+
+  "programs": [
+    {
+      "id": "wpengine",
+      "label": "WP Engine (Intigriti)",
+      "enabled": true,
+      "hosts": [
+        { "host": "wpengine.com",                 "mode": "exact" },
+        { "host": "my.wpengine.com",              "mode": "exact" },
+        { "host": "payments.wpengine.com",        "mode": "exact" },
+        { "host": "getflywheel.com",              "mode": "exact" },
+        { "host": "makeshift.film",               "mode": "exact" },
+        { "host": "studiopress.blog",             "mode": "exact" },
+        { "host": "torquemag.io",                 "mode": "exact" },
+
+        { "host": "advancedcustomfields.com",     "mode": "domainAndSubdomains" },
+        { "host": "bettersearchreplace.com",      "mode": "domainAndSubdomains" },
+        { "host": "deliciousbrains.com",          "mode": "domainAndSubdomains" },
+        { "host": "localwp.com",                  "mode": "domainAndSubdomains" },
+        { "host": "studiopress.com",              "mode": "domainAndSubdomains" },
+        { "host": "wpengine.io",                  "mode": "domainAndSubdomains" },
+        { "host": "wpesvc.net",                   "mode": "domainAndSubdomains" }
+      ]
+    },
+    {
+      "id": "allegro-sandbox",
+      "label": "Allegro Sandbox (PL/SK/CZ)",
+      "enabled": true,
+      "hosts": [
+        { "host": "allegro.pl.allegrosandbox.pl", "mode": "domainAndSubdomains" },
+        { "host": "allegro.sk.allegrosandbox.pl", "mode": "domainAndSubdomains" },
+        { "host": "allegro.cz.allegrosandbox.pl", "mode": "domainAndSubdomains" }
+      ]
+    }
+  ],
+
+  "neverTag": [
+    { "host": "app.getflywheel.com", "reason": "czeka na odpowiedź programu, do tego czasu nietknięty" },
+    { "host": "velocitize.com",      "reason": "out of scope" },
+    { "host": "flywheelsites.com",   "reason": "out of scope (*.flywheelsites.com)" },
+    { "host": "nitropack.io",        "reason": "Decyzja 2 v2 - pominięty w całości do czasu wejścia do testów" }
+  ],
+
+  "blocks": [
+    {
+      "id": "allegro-prod",
+      "label": "Produkcja Allegro - twardy blok",
+      "enabled": true,
+      "hosts": ["allegro.pl", "allegro.sk", "allegro.cz", "allegrogroup.com"]
+    }
+  ],
+
+  "verification": [
+    { "url": "https://allegro.pl.allegrosandbox.pl/",                  "type": "main_frame",      "expect": "tag",   "note": "sandbox PL, apex" },
+    { "url": "https://x.allegro.pl.allegrosandbox.pl/kategoria",       "type": "main_frame",      "expect": "tag",   "note": "sandbox PL, subdomena" },
+    { "url": "https://allegro.sk.allegrosandbox.pl/",                  "type": "main_frame",      "expect": "tag",   "note": "Decyzja 3 - rynek SK" },
+    { "url": "https://allegro.cz.allegrosandbox.pl/",                  "type": "main_frame",      "expect": "tag",   "note": "Decyzja 3 - rynek CZ" },
+    { "url": "https://allegrosandbox.pl.cokolwiek.tld/",               "type": "main_frame",      "expect": "none",  "note": "domena celu jako PREFIKS - tu wykladala sie stara regula" },
+    { "url": "https://example.com/?q=allegro.pl.allegrosandbox.pl",    "type": "xmlhttprequest",  "expect": "none",  "note": "nazwa domeny w query stringu" },
+    { "url": "https://evil.tld/https://allegro.pl.allegrosandbox.pl/", "type": "main_frame",      "expect": "none",  "note": "nazwa domeny w sciezce" },
+
+    { "url": "https://allegro.pl/",                                    "type": "main_frame",      "expect": "block", "note": "Decyzja 4 - produkcja" },
+    { "url": "https://api.allegro.pl/x",                               "type": "xmlhttprequest",  "expect": "block", "note": "Decyzja 4 - subdomena produkcji" },
+    { "url": "https://allegro.sk/",                                    "type": "main_frame",      "expect": "block", "note": "Decyzja 4" },
+    { "url": "https://allegro.cz/",                                    "type": "main_frame",      "expect": "block", "note": "Decyzja 4" },
+    { "url": "https://www.allegrogroup.com/",                          "type": "main_frame",      "expect": "block", "note": "Decyzja 4" },
+
+    { "url": "https://wpengine.com/",                                  "type": "main_frame",      "expect": "tag",   "note": "host dokladny" },
+    { "url": "https://my.wpengine.com/login",                          "type": "main_frame",      "expect": "tag",   "note": "host dokladny" },
+    { "url": "https://sub.wpengine.com/",                              "type": "main_frame",      "expect": "none",  "note": "wpengine.com jest DOKLADNY, subdomeny poza scope" },
+    { "url": "https://notwpengine.com/",                               "type": "main_frame",      "expect": "none",  "note": "sufiks bez kropki" },
+    { "url": "https://wpengine.com.evil.tld/",                         "type": "main_frame",      "expect": "none",  "note": "domena celu jako prefiks" },
+    { "url": "https://foo.wpengine.io/asset.js",                       "type": "script",          "expect": "tag",   "note": "wildcard, subresource" },
+    { "url": "https://wpesvc.net/",                                    "type": "main_frame",      "expect": "tag",   "note": "wildcard obejmuje apex" },
+    { "url": "https://app.getflywheel.com/",                           "type": "main_frame",      "expect": "none",  "note": "NIE KONFIGURUJ" },
+    { "url": "https://velocitize.com/",                                "type": "main_frame",      "expect": "none",  "note": "NIE KONFIGURUJ" },
+    { "url": "https://foo.flywheelsites.com/",                         "type": "main_frame",      "expect": "none",  "note": "NIE KONFIGURUJ" },
+    { "url": "https://marketing.nitropack.io/",                        "type": "main_frame",      "expect": "none",  "note": "Decyzja 2 - jawnie out of scope" },
+    { "url": "https://nitropack.io/",                                  "type": "main_frame",      "expect": "none",  "note": "Decyzja 2 - pominiety w calosci" }
+  ]
+}

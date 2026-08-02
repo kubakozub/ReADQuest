@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "ReADQuest",
+  "version": "0.1.0",
+  "description": "Lokalne oznaczanie i blokowanie ruchu wg zakresu programu bug bounty. Reguly zostaja na dysku - nic nie idzie do chmury.",
+  "minimum_chrome_version": "120",
+  "permissions": [
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.advancedcustomfields.com/*",
+    "*://*.allegro.cz.allegrosandbox.pl/*",
+    "*://*.allegro.pl.allegrosandbox.pl/*",
+    "*://*.allegro.sk.allegrosandbox.pl/*",
+    "*://*.bettersearchreplace.com/*",
+    "*://*.deliciousbrains.com/*",
+    "*://*.localwp.com/*",
+    "*://*.studiopress.com/*",
+    "*://*.wpengine.io/*",
+    "*://*.wpesvc.net/*",
+    "*://advancedcustomfields.com/*",
+    "*://allegro.cz.allegrosandbox.pl/*",
+    "*://allegro.pl.allegrosandbox.pl/*",
+    "*://allegro.sk.allegrosandbox.pl/*",
+    "*://bettersearchreplace.com/*",
+    "*://deliciousbrains.com/*",
+    "*://getflywheel.com/*",
+    "*://localwp.com/*",
+    "*://makeshift.film/*",
+    "*://my.wpengine.com/*",
+    "*://payments.wpengine.com/*",
+    "*://studiopress.blog/*",
+    "*://studiopress.com/*",
+    "*://torquemag.io/*",
+    "*://wpengine.com/*",
+    "*://wpengine.io/*",
+    "*://wpesvc.net/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "ReADQuest",
+    "default_popup": "src/popup.html"
+  }
+}

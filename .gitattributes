@@ -1,0 +1,8 @@
+# W repozytorium trzymamy LF, w katalogu roboczym Git normalizuje pod system.
+* text=auto
+*.json text
+*.js   text
+*.mjs  text
+*.md   text
+*.html text
+*.css  text
