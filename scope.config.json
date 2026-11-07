@@ -1,12 +1,12 @@
 {
   "$comment": [
-    "Jedyne źródło prawdy dla reguł. Po każdej zmianie: node tools/sync-manifest.mjs,",
-    "potem Reload rozszerzenia w chrome://extensions i zakładka DIAGNOSTYKA w popupie.",
+    "The single source of truth for the rules. After every change run node tools/sync-manifest.mjs,",
+    "then Reload the extension in chrome://extensions and check the DIAGNOSTICS tab.",
     "",
     "mode:",
     "  exact               -> tylko ten host, bez subdomen",
     "  domainAndSubdomains -> host + wszystkie subdomeny (odpowiednik ^(.+\\.)?host$ z v1)",
-    "  subdomains          -> wyłącznie subdomeny, apex NIE jest oznaczany"
+    "  subdomains          -> subdomains only, the apex is NOT tagged"
   ],
 
   "identity": {
@@ -49,16 +49,16 @@
   ],
 
   "neverTag": [
-    { "host": "app.getflywheel.com", "reason": "czeka na odpowiedź programu, do tego czasu nietknięty" },
+    { "host": "app.getflywheel.com", "reason": "awaiting a reply from the program, untouched until then" },
     { "host": "velocitize.com",      "reason": "out of scope" },
     { "host": "flywheelsites.com",   "reason": "out of scope (*.flywheelsites.com)" },
-    { "host": "nitropack.io",        "reason": "Decyzja 2 v2 - pominięty w całości do czasu wejścia do testów" }
+    { "host": "nitropack.io",        "reason": "skipped in full until testing begins" }
   ],
 
   "blocks": [
     {
       "id": "allegro-prod",
-      "label": "Produkcja Allegro - twardy blok",
+      "label": "production hosts, hard block",
       "enabled": true,
       "hosts": ["allegro.pl", "allegro.sk", "allegro.cz", "allegrogroup.com"]
     }

@@ -1,6 +1,7 @@
 // Przepisuje manifest.host_permissions ze scope.config.json.
-// Bez tego modifyHeaders nie ma prawa dodać nagłówka, mimo że reguła jest "aktywna".
-// Uruchom po każdej zmianie listy hostów:  node tools/sync-manifest.mjs
+// Without this, modifyHeaders is not permitted to add the header even though the
+// rule reads "active". Run it after every change to the host list:
+//   node tools/sync-manifest.mjs
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -29,7 +30,7 @@ const removed = prev.filter((o) => !next.includes(o));
 manifest.host_permissions = next;
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf8");
 
-console.log(`host_permissions: ${next.length} originów`);
+console.log(`host_permissions: ${next.length} origins`);
 for (const o of added) console.log(`  + ${o}`);
 for (const o of removed) console.log(`  - ${o}`);
 if (!added.length && !removed.length) console.log("  bez zmian");

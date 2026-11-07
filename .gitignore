@@ -1,7 +1,7 @@
-# Zależności: repo ma ich nie mieć (CLAUDE.md §10), wpis na wypadek narzędzi pomocniczych
+# Dependencies: this repo is meant to have none (CLAUDE.md section 10). Kept in case
 node_modules/
 
-# Lokalne nadpisania zakresu, które nie mają trafiać do repo
+# Local scope overrides, which must never be committed
 scope.config.local.json
 
 # Artefakty systemowe

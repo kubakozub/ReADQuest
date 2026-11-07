@@ -1,7 +1,7 @@
-// Offline'owa replika dopasowania DNR: sprawdza baterię `verification`
-// ze scope.config.json bez uruchamiania Chrome. Nie zastępuje testera
-// w popupie (ten pyta prawdziwy silnik), ale łapie błędy w konfiguracji
-// zanim rozszerzenie w ogóle zostanie załadowane.
+// An offline replica of DNR matching: it runs the `verification` battery from
+// scope.config.json without starting Chrome. It does not replace the tester in
+// the popup, which asks the real engine, but it catches configuration errors
+// before the extension is loaded at all.
 //
 //   node tools/selftest.mjs
 
@@ -18,7 +18,7 @@ const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) TEST";
 
 const build = (toggles) => compile(config, { toggles, userAgent: UA, resourceTypes: RESOURCE_TYPES });
 
-// requestDomains: dopasowanie po etykietach — host równy domenie albo jej subdomena.
+// requestDomains matches on labels: the host equals the domain, or is a subdomain of it.
 function domainMatches(hostname, domain) {
   return hostname === domain || hostname.endsWith("." + domain);
 }
@@ -44,12 +44,12 @@ function outcomeFor({ rules, meta }, url) {
 let failed = 0;
 
 // ---------------------------------------------------------------- przebieg 1
-// Stan domyślny runtime'u. Ta sama stała, której używa service worker —
-// dzięki temu "100%" mówi coś o konfiguracji, w której produkt faktycznie startuje.
+// The runtime default state, the same constant the service worker uses, so that
+// a full pass says something about the configuration the product actually starts in.
 
 const base = build(DEFAULT_TOGGLES);
-console.log(`Stan domyślny runtime: ${JSON.stringify(DEFAULT_TOGGLES)}`);
-console.log(`Reguł: ${base.rules.length}  (ostrzeżenia: ${base.warnings.length ? base.warnings.join("; ") : "brak"})\n`);
+console.log(`runtime default state: ${JSON.stringify(DEFAULT_TOGGLES)}`);
+console.log(`rules: ${base.rules.length}  (warnings: ${base.warnings.length ? base.warnings.join("; ") : "none"})\n`);
 
 const baseOutcomes = new Map();
 for (const t of config.verification) {
@@ -58,15 +58,15 @@ for (const t of config.verification) {
   const pass = outcome === t.expect;
   if (!pass) failed++;
   console.log(`${pass ? "  OK " : "  !! "} ${outcome.padEnd(5)} ${pass ? "" : `(oczek. ${t.expect}) `}${t.url}`);
-  if (!pass) console.log(`       trafiło: ${hits.map((h) => h.label).join(", ") || "nic"}`);
+  if (!pass) console.log(`       matched: ${hits.map((h) => h.label).join(", ") || "nothing"}`);
 }
 
 // ---------------------------------------------------------------- przebieg 2
-// Blokada zdjęta. Jedyna dopuszczalna różnica: przypadki `expect: "block"`
-// stają się `none`. Cokolwiek innego znaczy, że zdjęcie blokady rusza
-// oznaczanie albo wykluczenia, czego robić nie ma prawa.
+// The block is lifted. The only permitted difference: cases marked
+// `expect: "block"` become `none`. Anything else means that lifting the block
+// also moves tagging or exclusions, which it has no business doing.
 
-console.log(`\nPrzebieg kontrolny: blockProduction=false (stan odstępstwa)`);
+console.log(`\ncontrol pass: blockProduction=false (the exception state)`);
 const off = build({ ...DEFAULT_TOGGLES, blockProduction: false });
 
 for (const t of config.verification) {
@@ -77,7 +77,7 @@ for (const t of config.verification) {
     console.log(`  !!  ${outcome} (oczek. ${wanted}) ${t.url}`);
   }
 }
-console.log(`  reguł bez blokady: ${off.rules.length} (o ${base.rules.length - off.rules.length} mniej)`);
+console.log(`  rules without the block: ${off.rules.length} (${base.rules.length - off.rules.length} fewer)`);
 
 // ---------------------------------------------------------------- limit regexa
 
@@ -85,9 +85,9 @@ const longest = base.rules
   .filter((r) => r.condition.regexFilter)
   .sort((a, b) => b.condition.regexFilter.length - a.condition.regexFilter.length)[0];
 if (longest) {
-  console.log(`\nNajdłuższy regexFilter: ${longest.condition.regexFilter.length} znaków — ${longest.condition.regexFilter}`);
+  console.log(`\nlongest regexFilter: ${longest.condition.regexFilter.length} characters, ${longest.condition.regexFilter}`);
 }
-console.log(`Reguł z regexem: ${base.rules.filter((r) => r.condition.regexFilter).length} / ${base.rules.length}`);
+console.log(`rules using a regex: ${base.rules.filter((r) => r.condition.regexFilter).length} / ${base.rules.length}`);
 
-console.log(failed ? `\nNIEZGODNOŚCI: ${failed}` : `\nWszystkie ${config.verification.length} przypadków zgodnych w obu przebiegach.`);
+console.log(failed ? `\nMISMATCHES: ${failed}` : `\nAll ${config.verification.length} cases agree across both passes.`);
 process.exit(failed ? 1 : 0);

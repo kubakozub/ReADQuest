@@ -6,7 +6,7 @@ const LOG_MAX = 500;
 
 async function loadConfig() {
   const res = await fetch(chrome.runtime.getURL("scope.config.json"));
-  if (!res.ok) throw new Error(`nie mogę wczytać scope.config.json (${res.status})`);
+  if (!res.ok) throw new Error(`cannot load scope.config.json (${res.status})`);
   return res.json();
 }
 
@@ -29,7 +29,7 @@ async function getHealth() {
   return health ?? null;
 }
 
-// ------------------------------------------------------------ instalacja reguł
+// -------------------------------------------------------- installing the rules
 
 async function applyRules() {
   const startedAt = Date.now();
@@ -37,8 +37,8 @@ async function applyRules() {
   try {
     await runApply(startedAt, problems);
   } catch (e) {
-    // Plakietka PRZED zapisem do storage: gdyby to storage było przyczyną
-    // awarii, sygnał i tak dotrze do użytkownika.
+    // The badge is set BEFORE writing to storage: if storage itself were the cause
+    // of the failure, the signal still reaches the user.
     try {
       await chrome.action.setBadgeText({ text: "ERR" });
       await chrome.action.setBadgeBackgroundColor({ color: "#c0392b" });
@@ -56,9 +56,9 @@ async function applyRules() {
   }
 }
 
-// Właściwa instalacja. Poza jawnymi blokami try stoi tu sporo wywołań chrome.*;
-// każde ich odrzucenie łapie applyRules i zamienia w widoczny stan błędu.
-// Cicha awaria jest błędem krytycznym (CLAUDE.md §11 pkt 5, teza W2).
+// The actual installation. Beyond the explicit try blocks there are many chrome.*
+// calls here; applyRules catches every rejection and turns it into a visible error
+// state. A silent failure is a critical defect (CLAUDE.md section 11, point 5).
 async function runApply(startedAt, problems) {
   let config, toggles, meta = {}, rules = [];
 
@@ -80,9 +80,9 @@ async function runApply(startedAt, problems) {
     return;
   }
 
-  // KROK 0 zautomatyzowany: każdy wygenerowany regex przechodzi przez natywny
-  // walidator RE2 Chrome. `memoryLimitExceeded` to dokładnie ten sam warunek,
-  // który w Requestly objawia się jako "was skipped ... 2KB memory limit".
+  // Step 0, automated: every generated regex passes through Chrome's own native RE2
+  // validator. `memoryLimitExceeded` is exactly the condition that surfaces in other
+  // tools as "was skipped ... 2KB memory limit".
   for (const r of rules) {
     const regex = r.condition.regexFilter;
     if (!regex) continue;
@@ -92,11 +92,11 @@ async function runApply(startedAt, problems) {
       requireCapturing: false,
     });
     if (!check.isSupported) {
-      problems.push(`regex reguły ${r.id} (${meta[r.id]?.label}) odrzucony: ${check.reason}`);
+      problems.push(`regex for rule ${r.id} (${meta[r.id]?.label}) rejected: ${check.reason}`);
     }
   }
 
-  // Nie instalujemy częściowego zestawu. Albo wszystko, albo nic.
+  // A partial set is never installed. All of it, or none of it.
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   try {
     await chrome.declarativeNetRequest.updateDynamicRules({
@@ -107,7 +107,7 @@ async function runApply(startedAt, problems) {
     problems.push(`updateDynamicRules odrzucone: ${String(e.message ?? e)}`);
   }
 
-  // Potwierdzenie z drugiej strony: czytamy, co silnik naprawdę ma u siebie.
+  // Confirmation from the other side: read back what the engine actually holds.
   // "Active" w UI nie jest dowodem: to jest.
   const installed = await chrome.declarativeNetRequest.getDynamicRules();
   const installedIds = new Set(installed.map((r) => r.id));
@@ -115,14 +115,14 @@ async function runApply(startedAt, problems) {
 
   for (const r of rules) {
     if (!problems.length && !installedIds.has(r.id)) {
-      problems.push(`reguła ${r.id} (${meta[r.id]?.label}) nie została zainstalowana`);
+      problems.push(`rule ${r.id} (${meta[r.id]?.label}) was not installed`);
     }
   }
   for (const id of installedIds) {
-    if (!intendedIds.has(id)) problems.push(`osierocona reguła w silniku: ${id}`);
+    if (!intendedIds.has(id)) problems.push(`orphaned rule in the engine: ${id}`);
   }
 
-  // Bez host permission modifyHeaders nie zadziała, choć reguła będzie "aktywna".
+  // Without a host permission modifyHeaders will not fire, though the rule reads "active".
   const origins = requiredOrigins(config);
   const missingOrigins = [];
   for (const o of origins) {
@@ -131,7 +131,7 @@ async function runApply(startedAt, problems) {
   }
   if (missingOrigins.length) {
     problems.push(
-      `brak host_permissions dla ${missingOrigins.length} originów: nagłówek NIE zostanie dodany. Uruchom: node tools/sync-manifest.mjs`
+      `host_permissions missing for ${missingOrigins.length} origins: the header will NOT be added. Run: node tools/sync-manifest.mjs`
     );
   }
 
@@ -156,7 +156,7 @@ async function runApply(startedAt, problems) {
   });
 }
 
-// ------------------------------------------------------------------- log trafień
+// ------------------------------------------------------------------ the match log
 
 let buffer = [];
 let flushTimer = null;
@@ -201,7 +201,7 @@ async function runVerification() {
     let matched = [];
     let error = null;
     try {
-      // testMatchOutcome pyta silnik "co byś zrobił", nie wysyłając żądania.
+      // testMatchOutcome asks the engine "what would you do", sending no request.
       const res = await chrome.declarativeNetRequest.testMatchOutcome({
         url: t.url,
         type: t.type ?? "main_frame",
