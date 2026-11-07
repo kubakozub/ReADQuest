@@ -12,7 +12,7 @@ function esc(s) {
 function renderHealth() {
   const h = state.health;
   const el = $("#tab-health");
-  if (!h) { el.innerHTML = `<p class="hint">Brak danych — kliknij „Reguły” → przeładuj rozszerzenie.</p>`; return; }
+  if (!h) { el.innerHTML = `<p class="hint">Brak danych: kliknij „Reguły” → przeładuj rozszerzenie.</p>`; return; }
 
   const c = h.counts ?? {};
   const problems = h.problems ?? [];
@@ -40,13 +40,13 @@ function renderTests(results) {
   const passed = results.filter((r) => r.pass).length;
   $("#testSummary").innerHTML = passed === results.length
     ? `<span class="good">${passed}/${results.length} OK</span>`
-    : `<span style="color:var(--err)">${passed}/${results.length} — ${results.length - passed} niezgodnych</span>`;
+    : `<span style="color:var(--err)">${passed}/${results.length}: ${results.length - passed} niezgodnych</span>`;
 
   $("#testResults").innerHTML = results.map((r) => `
     <div class="row">
       <span class="tick ${r.pass ? "pass" : "fail"}">${r.pass ? "OK" : "!!"}</span>
       <span class="url">${esc(r.url)}
-        <span class="note">${esc(r.note ?? "")}${r.error ? ` — BŁĄD: ${esc(r.error)}` : ""}</span>
+        <span class="note">${esc(r.note ?? "")}${r.error ? `: BŁĄD: ${esc(r.error)}` : ""}</span>
         ${r.matched?.length ? `<span class="note">trafiło: ${r.matched.map((m) => esc(m.label)).join(", ")}</span>` : ""}
       </span>
       <span class="tagpill ${r.outcome}">${r.outcome}</span>
@@ -68,7 +68,7 @@ function renderLog() {
     return `<div class="row">
       <span class="t">${new Date(e.t).toLocaleTimeString("pl-PL")}</span>
       <span class="tagpill ${m.kind === "allow" ? "none" : m.kind}">${esc(m.kind)}</span>
-      <span class="url">${esc(e.url)}<span class="note">${esc(e.method)} ${esc(e.type)} — ${esc(m.label)}</span></span>
+      <span class="url">${esc(e.url)}<span class="note">${esc(e.method)} ${esc(e.type)}: ${esc(m.label)}</span></span>
     </div>`;
   }).join("");
 }
@@ -97,7 +97,7 @@ async function refresh() {
     next = { error: String(e.message ?? e) };
   }
   // Milczące zawieszenie popupu byłoby dokładnie tą cichą awarią, którą
-  // narzędzie ma tępić — brak odpowiedzi musi być widoczny.
+  // narzędzie ma tępić: brak odpowiedzi musi być widoczny.
   if (!next || next.error) return showFatal(next?.error ?? "brak odpowiedzi");
 
   state = next;

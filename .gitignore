@@ -1,4 +1,4 @@
-# Zależności — repo ma ich nie mieć (CLAUDE.md §10), wpis na wypadek narzędzi pomocniczych
+# Zależności: repo ma ich nie mieć (CLAUDE.md §10), wpis na wypadek narzędzi pomocniczych
 node_modules/
 
 # Lokalne nadpisania zakresu, które nie mają trafiać do repo

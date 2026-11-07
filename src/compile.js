@@ -1,10 +1,10 @@
 // Kompilator: scope.config.json -> reguły declarativeNetRequest.
-// Czysta funkcja, bez dostępu do chrome.* — żeby dało się ją testować i czytać.
+// Czysta funkcja, bez dostępu do chrome.*: żeby dało się ją testować i czytać.
 
 export const PRIORITY = { block: 300, allow: 200, tag: 10 };
 
 // Blok produkcji jest domyślnie WŁĄCZONY (CLAUDE.md §8). Jedyne źródło tej
-// wartości — importują ją i service worker, i symulator offline, żeby test
+// wartości: importują ją i service worker, i symulator offline, żeby test
 // nigdy nie sprawdzał konfiguracji innej niż ta, w której produkt startuje.
 export const DEFAULT_TOGGLES = { tagging: true, blockProduction: true };
 

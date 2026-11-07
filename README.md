@@ -9,7 +9,7 @@ Trzy różnice względem Requestly, które są tu istotne:
 
 1. **Nic nie wychodzi na zewnątrz.** Reguły to plik na dysku. Ograniczenie „zero
    nagłówków `Cookie` i `Authorization`, bo reguły idą do chmury" przestaje
-   obowiązywać z powodu technicznego — zostaje wyłącznie jako Twoja decyzja.
+   obowiązywać z powodu technicznego: zostaje wyłącznie jako Twoja decyzja.
 2. **Weryfikacja jest częścią narzędzia, nie procedurą obok niego.** Po każdej
    zmianie rozszerzenie odczytuje z silnika Chrome, co naprawdę zostało
    zainstalowane, i porównuje z tym, co miało być. Martwa reguła jest widoczna
@@ -43,13 +43,13 @@ Odtwarza logikę dopasowania DNR w Node i przepuszcza przez nią całą baterię
 `verification` ze `scope.config.json` w **dwóch przebiegach**: w stanie
 domyślnym rozszerzenia (ta sama stała `DEFAULT_TOGGLES`, której używa service
 worker) oraz w stanie odstępstwa ze zdjętą blokadą produkcji. Drugi przebieg
-dopuszcza wyłącznie jedną różnicę — przypadki `expect: "block"` stają się
+dopuszcza wyłącznie jedną różnicę: przypadki `expect: "block"` stają się
 `none`. Cokolwiek innego znaczy, że zdjęcie blokady rusza oznaczanie albo
 wykluczenia, czego robić nie ma prawa.
 
 ---
 
-## KROK 0 — odpowiedź
+## KROK 0: odpowiedź
 
 **Twoja hipoteza jest trafna: DNR ma pola dopasowania, które nie kompilują
 regexa, i limit 2 KB ich nie dotyczy.**
@@ -63,7 +63,7 @@ regexa, i limit 2 KB ich nie dotyczy.**
 
 Czyli: jeżeli Requestly mapuje **Host / Matches (Wildcard)** na `requestDomains`
 albo `urlFilter`, problem alternacji znika i lista hostów może zostać w jednej
-regule. Jeżeli mapuje wszystko na `regexFilter` — trzeba rozbijać.
+regule. Jeżeli mapuje wszystko na `regexFilter`: trzeba rozbijać.
 
 **Zamiast testu 2 KB zrób test, który daje odpowiedź wprost.** Test z v2 jest
 pośredni: mówi „nie przekroczyło limitu", a nie „nie użyto regexa". Dwa warunki
@@ -89,12 +89,12 @@ używać obu ścieżek.
 - `mode: "exact"` → krótki zakotwiczony regex, 41 znaków w najdłuższym
   przypadku wobec limitu ~2000;
 - każdy wygenerowany regex przechodzi przed instalacją przez
-  `isRegexSupported()`, czyli natywny walidator RE2 Chrome — to jest ten sam
+  `isRegexSupported()`, czyli natywny walidator RE2 Chrome: to jest ten sam
   warunek, który w Requestly objawiał się jako *„was skipped … 2KB memory
   limit"*, tylko sprawdzany zawczasu i widoczny w zakładce Diagnostyka.
 
 **Jedna reguła na host mimo braku przymusu.** Rozbicie nie jest już wymuszone
-limitem, ale zostaje — bo tylko wtedy log trafień i tester potrafią powiedzieć
+limitem, ale zostaje: bo tylko wtedy log trafień i tester potrafią powiedzieć
 *która* pozycja zakresu strzeliła. Przy limicie 5000 reguł dynamicznych 25 reguł
 nie jest żadnym kosztem.
 
@@ -120,7 +120,7 @@ Trzy tryby dopasowania hosta:
 | `subdomains` | wyłącznie subdomeny, apex nie | `^https?://([^/:?#@]+\.)+host(:\d+)?/` |
 
 `domainAndSubdomains` odpowiada dokładnie Twojemu regexowi z v1
-(`^(.+\.)?domena\.tld$`) — apex jest objęty. Zapis `*.wpengine.io` w zakresie
+(`^(.+\.)?domena\.tld$`): apex jest objęty. Zapis `*.wpengine.io` w zakresie
 programu bywa czytany jako „tylko subdomeny"; jeśli chcesz tę interpretację,
 zmień `mode` na `subdomains`.
 
@@ -131,22 +131,22 @@ zawsze, także z wykluczeniem.
 
 `navigator.userAgent` przeglądarki + spacja + `identity.marker`. UA nie jest
 zaszyty na sztywno, więc nie zdezaktualizuje się po aktualizacji Chrome.
-Podmieniany jest wyłącznie nagłówek HTTP — `navigator.userAgent` w JavaScripcie
+Podmieniany jest wyłącznie nagłówek HTTP: `navigator.userAgent` w JavaScripcie
 strony pozostaje nietknięty, co ogranicza ryzyko rozjazdów w aplikacji.
 Nadpisanie wartości: `identity.userAgentOverride` w configu.
 
 ---
 
-## Protokół weryfikacji — gdzie co sprawdzasz
+## Protokół weryfikacji: gdzie co sprawdzasz
 
 | krok protokołu | gdzie |
 |---|---|
-| 1. zero „was skipped" | zakładka **Diagnostyka** — zielony komunikat znaczy: każda reguła potwierdzona odczytem z silnika, żaden regex nieodrzucony, żadna reguła osierocona, `host_permissions` kompletne |
+| 1. zero „was skipped" | zakładka **Diagnostyka**: zielony komunikat znaczy: każda reguła potwierdzona odczytem z silnika, żaden regex nieodrzucony, żadna reguła osierocona, `host_permissions` kompletne |
 | 2. trafienie w cel | zakładka **Tester** (statycznie) + **Log trafień** i DevTools → Network podczas realnej sesji |
-| 3. brak wycieku | zakładka **Tester** — bateria zawiera oba przypadki, na których wykładała się poprzednia reguła: domena w query stringu oraz domena jako prefiks (`allegrosandbox.pl.cokolwiek.tld`) |
+| 3. brak wycieku | zakładka **Tester**: bateria zawiera oba przypadki, na których wykładała się poprzednia reguła: domena w query stringu oraz domena jako prefiks (`allegrosandbox.pl.cokolwiek.tld`) |
 | 4. blokada produkcji | zakładka **Tester** (przełącznik włączony domyślnie); potwierdzenie w Network przy realnym wejściu |
 
-Zakładka **Reguły** pokazuje skompilowany JSON z przyciskiem kopiowania — to
+Zakładka **Reguły** pokazuje skompilowany JSON z przyciskiem kopiowania: to
 jest eksport z Decyzji 5. Kopiuj dopiero, gdy Diagnostyka jest zielona,
 a Tester świeci 24/24.
 
@@ -159,19 +159,19 @@ z protokołu weryfikacji" jest spełnione konstrukcyjnie.
 ## Znane ograniczenia
 
 - **`host_permissions` musi pokrywać hosty oznaczane.** Bez tego `modifyHeaders`
-  nie ma prawa dodać nagłówka, choć reguła będzie wyglądać na aktywną — dokładnie
+  nie ma prawa dodać nagłówka, choć reguła będzie wyglądać na aktywną: dokładnie
   ten rodzaj cichej awarii, który tu tępimy. Diagnostyka to wykrywa i mówi, co
   uruchomić. Efekt uboczny jest korzystny: lista originów w manifeście działa
   jako druga siatka bezpieczeństwa, bo nawet błędna reguła nie doda nagłówka
   hostowi, którego świadomie nie wpisałeś.
 - **Podzasoby ładowane z hosta spoza scope.** Chrome wymaga dla `modifyHeaders`
   uprawnienia także do inicjatora żądania. Jeśli w logu widzisz, że podzasoby
-  z hosta w scope nie dostają nagłówka, dopisz `"*://*/*"` do `host_permissions`
-  — świadomie poszerzasz uprawnienia w zamian za pokrycie.
+  z hosta w scope nie dostają nagłówka, dopisz `"*://*/*"` do `host_permissions`:
+   świadomie poszerzasz uprawnienia w zamian za pokrycie.
 - **Blokada produkcji nie pokrywa pozycji „Other" w zakresie Allegro.** To jest
   siatka bezpieczeństwa dla wyliczonych domen, nie gwarancja. Szczegół
   w `NOTATKA.md`.
-- Log trafień żyje w `storage.session` — znika po restarcie przeglądarki. Jeśli
+- Log trafień żyje w `storage.session`: znika po restarcie przeglądarki. Jeśli
   ma być dowodem w raporcie, skopiuj go przed zamknięciem.
 - Testowane offline na symulatorze DNR (24/24). Uruchomienie w realnym Chrome
-  jest po Twojej stronie — nie mam dostępu do Twojej przeglądarki.
+  jest po Twojej stronie: nie mam dostępu do Twojej przeglądarki.

@@ -37,7 +37,7 @@ async function applyRules() {
   try {
     await runApply(startedAt, problems);
   } catch (e) {
-    // Plakietka PRZED zapisem do storage — gdyby to storage było przyczyną
+    // Plakietka PRZED zapisem do storage: gdyby to storage było przyczyną
     // awarii, sygnał i tak dotrze do użytkownika.
     try {
       await chrome.action.setBadgeText({ text: "ERR" });
@@ -108,7 +108,7 @@ async function runApply(startedAt, problems) {
   }
 
   // Potwierdzenie z drugiej strony: czytamy, co silnik naprawdę ma u siebie.
-  // "Active" w UI nie jest dowodem — to jest.
+  // "Active" w UI nie jest dowodem: to jest.
   const installed = await chrome.declarativeNetRequest.getDynamicRules();
   const installedIds = new Set(installed.map((r) => r.id));
   const intendedIds = problems.length ? new Set() : new Set(rules.map((r) => r.id));
@@ -131,7 +131,7 @@ async function runApply(startedAt, problems) {
   }
   if (missingOrigins.length) {
     problems.push(
-      `brak host_permissions dla ${missingOrigins.length} originów — nagłówek NIE zostanie dodany. Uruchom: node tools/sync-manifest.mjs`
+      `brak host_permissions dla ${missingOrigins.length} originów: nagłówek NIE zostanie dodany. Uruchom: node tools/sync-manifest.mjs`
     );
   }
 
